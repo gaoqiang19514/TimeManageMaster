@@ -58,3 +58,6 @@ function started(second) {
         }
     }, 1000);
 }
+
+window.isCountdown = isCountdown;
+window.started = started;

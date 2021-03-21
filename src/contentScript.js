@@ -1,3 +1,5 @@
+import './css/contentScripts.css';
+
 function openMask() {
     let div = document.createElement('div');
 
