@@ -1,0 +1,30 @@
+{
+  "name": "Getting Started Example",
+  "description": "Build an Extension!",
+  "version": "1.0",
+  "manifest_version": 2,
+  "background": {
+    "scripts": ["js/dayjs.min.js", "background.js"],
+    "persistent": true
+  },
+  "permissions": ["storage", "activeTab"],
+  "browser_action": {
+    "default_icon": "./images/icons/texteditor_16.png",
+    "default_popup": "popup.html",
+    "default_title": "default_title"
+  },
+  "icons": {
+    "16": "./images/icons/texteditor_16.png",
+    "24": "./images/icons/texteditor_24.png",
+    "48": "./images/icons/texteditor_48.png",
+    "128": "./images/icons/texteditor_128.png"
+  },
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "css": ["css/contentScripts.css"],
+      "js": ["js/dayjs.min.js", "contentScript.js"]
+    }
+  ]
+}
