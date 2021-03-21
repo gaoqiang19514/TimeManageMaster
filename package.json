@@ -1,0 +1,5 @@
+{
+  "devDependencies": {
+    "eslint-config-zerod": "^1.0.0"
+  }
+}

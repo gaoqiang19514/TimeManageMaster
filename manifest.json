@@ -19,7 +19,6 @@
     "48": "./images/icons/texteditor_48.png",
     "128": "./images/icons/texteditor_128.png"
   },
-  "options_page": "options.html",
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
