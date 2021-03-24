@@ -7,7 +7,7 @@ function getCurrDate() {
 function getCurrTabId() {
     return new Promise((resolve, reject) => {
         try {
-            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            chrome.tabs.query({ active: true }, (tabs) => {
                 const activeTab = tabs.find((tab) => tab.active);
 
                 if (!activeTab) {
@@ -35,6 +35,8 @@ async function sendToContentScript(payload) {
         console.log('sendToContentScript():', err);
     }
 }
+
+async function sendToPopup() {}
 
 // eslint-disable-next-line no-unused-vars
 function started(second) {
