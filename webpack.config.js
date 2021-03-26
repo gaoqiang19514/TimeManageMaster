@@ -60,7 +60,11 @@ module.exports = {
             chunks: ['popup'],
         }),
         new CopyWebpackPlugin({
-            patterns: ['manifest.json', { from: 'src/icons', to: 'icons' }],
+            patterns: [
+                'manifest.json',
+                { from: 'src/icons', to: 'icons' },
+                { from: 'src/music', to: 'music' },
+            ],
         }),
     ],
     devServer: {

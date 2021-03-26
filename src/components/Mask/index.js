@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/media-has-caption */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
@@ -14,6 +15,16 @@ function Mask({ onClose }) {
             <Btn type="button" onClick={onClose}>
                 我知道了
             </Btn>
+            <audio
+                controls="controls"
+                autoPlay="autoplay"
+                style={{ display: 'none' }}
+            >
+                <source
+                    src="https://www.html5rocks.com/en/tutorials/audio/quick/test.mp3"
+                    type="audio/mp3"
+                />
+            </audio>
         </Container>
     );
 }
