@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
@@ -17,6 +18,7 @@ module.exports = {
         background: resolve('./src/background.js'),
         popup: resolve('./src/popup.js'),
         contentScript: resolve('./src/contentScript.js'),
+        demo: ['react-hot-loader/patch', resolve('src/demo.js')],
     },
     output: {
         path: resolve('build'),
@@ -53,11 +55,18 @@ module.exports = {
         },
     },
     plugins: [
+        new webpack.HotModuleReplacementPlugin(),
         new HtmlWebpackPlugin({
             title: 'popup page',
             filename: 'popup.html',
             template: 'public/popup.html',
             chunks: ['popup'],
+        }),
+        new HtmlWebpackPlugin({
+            title: 'demo page',
+            filename: 'demo.html',
+            template: 'public/demo.html',
+            chunks: ['demo'],
         }),
         new CopyWebpackPlugin({
             patterns: [
@@ -68,7 +77,12 @@ module.exports = {
         }),
     ],
     devServer: {
+        port: 3000,
+        progress: true,
+        // compress: true,
+        openPage: 'demo.html',
         contentBase: './build',
         open: true,
+        hot: true,
     },
 };
