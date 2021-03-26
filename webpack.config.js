@@ -47,6 +47,11 @@ module.exports = {
             },
         ],
     },
+    resolve: {
+        alias: {
+            '@': resolve('src'),
+        },
+    },
     plugins: [
         new HtmlWebpackPlugin({
             title: 'popup page',

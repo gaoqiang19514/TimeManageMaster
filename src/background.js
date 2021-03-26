@@ -1,3 +1,5 @@
+import { COUNTDOWN_EXEC, COUNTDOWN_DONE, COUNTDOWN_PROCESS } from '@/js/config';
+
 let isCountdown = false;
 
 function getCurrDate() {
@@ -36,7 +38,10 @@ async function sendToContentScript(payload) {
     }
 }
 
-async function sendToPopup() {}
+async function sendToPopup(params) {
+    console.log(`sendToPopup(): ${params}`);
+    chrome.runtime.sendMessage(params);
+}
 
 // eslint-disable-next-line no-unused-vars
 function started(second) {
@@ -46,8 +51,22 @@ function started(second) {
 
     isCountdown = true;
 
+    sendToPopup({
+        msg: '倒计时启动',
+        type: COUNTDOWN_EXEC,
+    });
+
     const timer = setInterval(() => {
         console.log('getCurrDate() === endDate', getCurrDate(), endDate);
+
+        sendToPopup({
+            msg: '倒计时进行中',
+            type: COUNTDOWN_PROCESS,
+            payload: {
+                second: Math.round((endDate - getCurrDate()) / 1000),
+            },
+        });
+
         if (getCurrDate() >= endDate) {
             clearInterval(timer);
             // eslint-disable-next-line no-unused-vars
@@ -56,6 +75,11 @@ function started(second) {
             sendToContentScript({
                 code: 0,
                 msg: '倒计时结束',
+            });
+
+            sendToPopup({
+                msg: '倒计时完成',
+                type: COUNTDOWN_DONE,
             });
         }
     }, 1000);
