@@ -1,5 +1,4 @@
 const path = require('path');
-const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
@@ -15,15 +14,19 @@ module.exports = {
         minimize: false,
     },
     entry: {
-        background: resolve('./src/background.js'),
-        popup: resolve('./src/popup.js'),
-        contentScript: resolve('./src/contentScript.js'),
-        demo: ['react-hot-loader/patch', resolve('src/demo.js')],
+        background: resolve('src/background.js'),
+        popup: resolve('src/popup.js'),
+        contentScript: resolve('src/contentScript.js'),
     },
     output: {
         path: resolve('build'),
         filename: '[name].js',
         clean: true,
+    },
+    resolve: {
+        alias: {
+            '@': resolve('src'),
+        },
     },
     module: {
         rules: [
@@ -49,13 +52,7 @@ module.exports = {
             },
         ],
     },
-    resolve: {
-        alias: {
-            '@': resolve('src'),
-        },
-    },
     plugins: [
-        new webpack.HotModuleReplacementPlugin(),
         new HtmlWebpackPlugin({
             title: 'popup page',
             filename: 'popup.html',
@@ -79,7 +76,7 @@ module.exports = {
     devServer: {
         port: 3000,
         progress: true,
-        // compress: true,
+        compress: true,
         openPage: 'demo.html',
         contentBase: './build',
         open: true,
