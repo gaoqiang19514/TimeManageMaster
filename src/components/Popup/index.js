@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import 'antd/dist/antd.css';
 import { Button, Select } from 'antd';
 import { useToggle } from 'ahooks';
 
+import { IsChrome, onMessage } from '@/js/utils';
 import { COUNTDOWN_EXEC, COUNTDOWN_DONE, COUNTDOWN_PROCESS } from '@/js/config';
 
-import { Container, BoxPrimary, TimeView } from '@/style/popup';
+import { Container, BoxPrimary, TimeView } from './styled';
 
-const BG = chrome.extension.getBackgroundPage();
 const { Option } = Select;
+const backgroundPage = chrome.extension.getBackgroundPage();
 
 function Popup() {
     const [count, setCount] = useState(0);
@@ -25,17 +26,32 @@ function Popup() {
             return;
         }
 
-        if (BG.isCountdown) {
+        // 检测是否存在倒计时
+        if (backgroundPage.cd.getStatus()) {
             return;
         }
 
         toggleLoading();
 
-        BG.started(state);
+        backgroundPage.launch(state);
     };
 
+    const initCountdown = useCallback(() => {
+        const count = backgroundPage.cd.getCount();
+        if (count) {
+            toggleDisabled(true);
+            setCount(count);
+        }
+    }, [toggleDisabled]);
+
     useEffect(() => {
-        chrome.runtime.onMessage.addListener((request) => {
+        if (!IsChrome()) {
+            return;
+        }
+
+        initCountdown();
+
+        onMessage((request) => {
             if (request.type === COUNTDOWN_EXEC) {
                 toggleLoading();
                 toggleDisabled();
@@ -50,7 +66,7 @@ function Popup() {
                 setCount(request.payload.second);
             }
         });
-    }, [toggleLoading, toggleDisabled]);
+    }, [toggleLoading, toggleDisabled, initCountdown]);
 
     return (
         <Container>

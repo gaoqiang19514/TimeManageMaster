@@ -16,7 +16,7 @@ module.exports = {
     entry: {
         background: resolve('src/background.js'),
         popup: resolve('src/popup.js'),
-        contentScript: resolve('src/contentScript.js'),
+        content_script: resolve('src/content_script.js'),
     },
     output: {
         path: resolve('build'),
@@ -66,11 +66,7 @@ module.exports = {
             chunks: ['demo'],
         }),
         new CopyWebpackPlugin({
-            patterns: [
-                'manifest.json',
-                { from: 'src/icons', to: 'icons' },
-                { from: 'src/music', to: 'music' },
-            ],
+            patterns: ['manifest.json', { from: 'src/icons', to: 'icons' }],
         }),
     ],
     devServer: {

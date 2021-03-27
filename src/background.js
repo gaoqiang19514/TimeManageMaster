@@ -1,89 +1,43 @@
 import { COUNTDOWN_EXEC, COUNTDOWN_DONE, COUNTDOWN_PROCESS } from '@/js/config';
+import { sendToContentScript, sendToPopup } from '@/js/utils';
+import Countdown from '@/js/Countdown';
 
-let isCountdown = false;
+const cd = new Countdown();
 
-function getCurrDate() {
-    return new Date().getTime();
-}
-
-function getCurrTabId() {
-    return new Promise((resolve, reject) => {
-        try {
-            chrome.tabs.query({ active: true }, (tabs) => {
-                const activeTab = tabs.find((tab) => tab.active);
-
-                if (!activeTab) {
-                    reject(new Error('未找到激活的tab'));
-                }
-
-                resolve(activeTab.id);
-            });
-        } catch (err) {
-            reject(err);
-        }
-    });
-}
-
-async function sendToContentScript(payload) {
-    try {
-        const tabId = await getCurrTabId();
-
-        // 如果当前没有被激活的tab呢？
-
-        chrome.tabs.sendMessage(tabId, payload, (response) => {
-            console.log('sendToContentScript():', response);
-        });
-    } catch (err) {
-        console.log('sendToContentScript():', err);
-    }
-}
-
-async function sendToPopup(params) {
-    console.log(`sendToPopup(): ${params}`);
-    chrome.runtime.sendMessage(params);
-}
-
-// eslint-disable-next-line no-unused-vars
-function started(second) {
-    const currDate = getCurrDate();
-    //   将分钟转换为毫秒
-    const endDate = currDate + second * 1000;
-
-    isCountdown = true;
-
+cd.addListener('started', () => {
     sendToPopup({
         msg: '倒计时启动',
         type: COUNTDOWN_EXEC,
     });
+});
 
-    const timer = setInterval(() => {
-        console.log('getCurrDate() === endDate', getCurrDate(), endDate);
+cd.addListener('process', () => {
+    sendToPopup({
+        msg: '倒计时进行中',
+        type: COUNTDOWN_PROCESS,
+        payload: {
+            second: cd.getCount(),
+        },
+    });
+});
 
-        sendToPopup({
-            msg: '倒计时进行中',
-            type: COUNTDOWN_PROCESS,
-            payload: {
-                second: Math.round((endDate - getCurrDate()) / 1000),
-            },
-        });
+cd.addListener('done', () => {
+    sendToContentScript({
+        code: 0,
+        msg: '倒计时结束',
+    });
 
-        if (getCurrDate() >= endDate) {
-            clearInterval(timer);
-            // eslint-disable-next-line no-unused-vars
-            isCountdown = false;
+    sendToPopup({
+        msg: '倒计时完成',
+        type: COUNTDOWN_DONE,
+    });
+});
 
-            sendToContentScript({
-                code: 0,
-                msg: '倒计时结束',
-            });
+function launch(second) {
+    cd.setCount(second);
 
-            sendToPopup({
-                msg: '倒计时完成',
-                type: COUNTDOWN_DONE,
-            });
-        }
-    }, 1000);
+    cd.started();
 }
 
-window.isCountdown = isCountdown;
-window.started = started;
+window.cd = cd;
+window.launch = launch;
