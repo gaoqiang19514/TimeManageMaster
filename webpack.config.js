@@ -7,13 +7,14 @@ function resolve(filename) {
 }
 
 module.exports = {
-    mode: 'production',
+    mode: 'development',
     optimization: {
         // 关闭默认开启的tree-shaking
         usedExports: false,
         minimize: false,
     },
     entry: {
+        index: resolve('src/index.js'),
         background: resolve('src/background.js'),
         popup: resolve('src/popup.js'),
         content_script: resolve('src/content_script.js'),
@@ -54,15 +55,21 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
+            title: 'index page',
+            filename: 'index.html',
+            template: 'public/index.html',
+            chunks: ['index'],
+        }),
+        new HtmlWebpackPlugin({
             title: 'popup page',
             filename: 'popup.html',
-            template: 'public/popup.html',
+            template: 'public/index.html',
             chunks: ['popup'],
         }),
         new HtmlWebpackPlugin({
             title: 'demo page',
             filename: 'demo.html',
-            template: 'public/demo.html',
+            template: 'public/index.html',
             chunks: ['demo'],
         }),
         new CopyWebpackPlugin({
@@ -73,7 +80,7 @@ module.exports = {
         port: 3000,
         progress: true,
         compress: true,
-        openPage: 'demo.html',
+        openPage: 'index.html',
         contentBase: './build',
         open: true,
         hot: true,
